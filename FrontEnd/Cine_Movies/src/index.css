@@ -1,0 +1,496 @@
+body{
+    background-color:  #030405;
+    color: #ffffff;
+     font-family: "Inter", sans-serif;
+
+}
+.Navbar{
+    margin: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    padding: 20px;
+    padding-bottom: 0;
+    z-index: 2;
+}
+.Navbar span{
+  color: #e20c15;
+}
+.Navbar h2{
+    margin: 10px;
+
+}
+
+.btns{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: auto;
+    margin-left: 360px;
+    margin-bottom: 0;
+    
+    
+}
+.btns p {
+    margin: 10px;
+    border-bottom: 5px solid #030405;
+    padding-bottom: 30px;
+    margin-bottom: 0;
+}
+.btns p:hover{
+    border-bottom: 5px solid #e20c15;
+}
+.notify{
+    margin-left: auto;
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: 20px;
+}
+*{
+    padding: 0;
+    margin: 0;
+}
+.Navbar i{
+    margin: 10px;
+    margin-top: 15px;
+    
+   
+}
+.Navbar img{
+       width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: white;
+    margin-left: 5px;
+}
+
+.Header{
+    width:470px;
+    margin-left: 70px;
+}
+.Header .ptag{
+    font-size: 12px;
+    color: #e20c15;
+    font-weight: 600;
+}
+
+.Header h1{
+    margin: 5px;
+    margin-left: 0;
+    font-size: 70px;
+    font-weight: 150;
+    letter-spacing: 8px;
+
+}
+.ratings {
+    display: flex;
+     /* centers horizontally */
+        /* centers vertically */
+    gap: 20px;
+                   /* space between them */
+}
+
+.ratings p {
+    margin: 0;
+    border-right: 1px solid #e20c15;
+    padding-right: 10px;
+    margin-bottom: 10px;
+    font-weight: 10;
+    font-size: 15px;
+}
+.ratings .lastp{
+    border: none;
+}
+.para{
+    font-size: 15px;
+    padding: 10px;
+    padding-left: 0;
+    padding-right: 0;
+    margin: 10px;
+    margin-left: 0 ;
+    margin-right: 0;
+}
+
+.bigbtns{
+    margin: 10px;
+    margin-left: 0;
+}
+.bigbtns i{
+    padding: 10px;
+}
+
+.bigbtns .btn1{
+    margin: 20px;
+    margin-left: 0;
+    margin-right: 10px;
+     padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 10px;
+    border: none;
+    background-color: #e20c15;
+    color: white;
+
+}
+
+.bigbtns .btn2{
+    margin: 20px;
+    margin-left: 0;
+    margin-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 10px;
+    border: 0.5px solid white;
+    background-color: transparent;
+    color: white;
+
+}
+.nextfav{
+    
+    margin: 10px;
+    margin-left: 50px;
+    
+
+}
+.nextfav h2{
+    padding-left: 10px;
+    border-left:5px solid #e20c15 ;
+    border-radius: 1px;
+}
+.pickforyou{
+    margin: 10px;
+    margin-left: 50px;
+
+}
+
+.pickforyou h2{
+    padding-left: 10px;
+    border-left:5px solid #e20c15 ;
+    border-radius: 1px;
+}
+.image_container{
+    padding: 10px;
+    margin: 10px;
+    margin-left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.image_container_2{
+    padding: 10px;
+    margin: 10px;
+    margin-left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.image_container_2 img{
+    width: 300px;
+    height: 200px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    flex-basis: 25%;
+    
+}
+.image_container img{
+    width: 300px;
+    height: 200px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    flex-basis: 25%;
+    
+}
+
+.footer{
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    height: 120px;
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.footer .CineMatch{
+    margin: 20px;
+}
+
+.CineMatch span{
+    color:  #e20c15 ;
+}
+
+.CineMatch p{
+    font-size: 12px;
+}
+.footer .icn{
+    display: flex;
+}
+
+.footer .icn i{
+    padding: 5px;
+    margin-top: 10px;
+}
+
+.footer .about{
+
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 350px;
+    margin-top: 20px;
+
+    margin-bottom: 50px;
+    
+    width: 400px;
+    justify-content: space-between;
+}
+
+.about .sec_1 p{
+    padding: 5px;
+    font-size: 12px;
+    font-weight: 0;
+}
+
+.sec_2{
+     display: flex;
+     flex-direction: column;
+    justify-content: center;
+    
+}
+
+.about .sec_2 p{
+    padding: 5px;
+    font-size: 12px;
+    font-weight: 0;
+   
+}
+
+.footer .LastDiv{
+    display: flex;
+    
+    margin-left: 400px;
+    
+    align-items: center;
+
+    
+    
+    
+}
+
+.LastDiv p{
+     padding: 5px;
+    font-size: 12px;
+    font-weight: 0;
+}
+
+.logindiv{
+    position: absolute;
+    margin-top: 50px;
+    bottom: 100px;
+    right: 150px;
+    background-color: #13191f;
+    padding: 30px;
+    padding-right: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    width: 30%;
+    z-index: 2;
+}
+
+.logindiv .heading{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.logindiv .heading h1{
+    padding: 10px;
+}
+.logindiv .heading p{
+    padding: 10px;
+}
+.logindiv .inps{
+    padding: 5px;
+}
+.logindiv .inps input{
+    padding: 5px;
+    height: 30px;
+    width:100%;
+    background-color: transparent;
+    color: white;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+}
+.logindiv .inps p{
+    padding-bottom: 10px;
+}
+
+.logindiv .inps button{
+    background-color: red;
+    width: 99%;
+    height: 40px;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.logindiv .lastcol{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+.logindiv .lastcol .signup{
+    color: #e20c15;
+    padding-left: 5px;
+}
+.logimage {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+  border: none;
+}
+
+.logimage img {
+  
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  border: none;
+}
+.hero-image {
+    position: relative;
+    width: 100%;
+    min-height: 550px;
+    overflow: visible;
+}
+
+/* Background image */
+.hero-image > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 550px;
+
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* Dark left → bright right */
+.hero-image::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 550px;
+
+    background: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.9) 0%,
+        rgba(0, 0, 0, 0.6) 30%,
+        rgba(0, 0, 0, 0.2) 65%,
+        rgba(0, 0, 0, 0) 100%
+    );
+
+    z-index: 1;
+}
+
+/* Content ABOVE image */
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.Header {
+    width: 470px;
+    margin-left: 70px;
+}
+
+
+.listbox {
+    width: 250px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: #1a1a1a;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    color: white;
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    padding: 0;
+    border-radius: 12px;
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+.listbox.active {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.listbox p {
+    padding: 12px 20px;
+    margin: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.listbox button {
+    background-color: #e20c15;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    margin: 8px 12px;
+    width: calc(100% - 24px);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.listbox button:hover {
+    background-color: #c20a11;
+    transform: scale(1.02);
+}
+
+.listbox button:active {
+    transform: scale(0.98);
+}
+
+.inps button:hover {
+    background-color: #c20a11;
+    transform: scale(1.02);
+}
+
+.inps button:active {
+    transform: scale(0.98);
+}
+
+
+
