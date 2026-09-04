@@ -8,7 +8,15 @@ class Movie(models.Model):
     title = models.CharField(max_length=500)
     original_title = models.CharField(max_length=500, blank=True)
     original_language = models.CharField(max_length=10, blank=True)
+    poster_path = models.CharField(
+        max_length=500,
+        blank=True
+    )
 
+    backdrop_path = models.CharField(
+        max_length=500,
+        blank=True
+    )
     overview = models.TextField(blank=True)
     tagline = models.TextField(blank=True)
     homepage = models.URLField(blank=True)

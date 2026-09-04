@@ -1,14 +1,51 @@
-import React from 'react'
+import React,{useState} from 'react'
 import TextField from './forms/MytextField'
 import { useForm } from "react-hook-form";
 import {useNavigate} from 'react-router-dom'
+import api from "./forms/Axios";
 
 function SignUp() {
-    const { control } = useForm();
+    const { control, handleSubmit } = useForm({
+    defaultValues: {
+      username:"",
+        email: "",
+        password: "",
+        password2: "",
+    },
+});
+const [wrong,setWrong] = useState(true)
+const wrongname = () => {
+      setWrong(false)
+    }
     const navigate = useNavigate()
     const backtologin = () => {
-      navigate("/")
+        navigate("/");
+    };
+
+    const onSubmit = async (data) => {
+        console.log(data);
+        console.log(data.password)
+        console.log(data.password2)
+        if (data.password == data.password2){
+          setWrong(true)
+              try {
+        const response = await api.post("/signup/", {
+            username:data.username,
+            email: data.email,
+            password: data.password,
+        });
+
+        console.log("Server:", response.data);
+
+        navigate("/");
+    } catch (error) {
+        console.error("Signup error:", error);
     }
+        }
+        else{
+          setWrong(false)
+        }
+    };
   return (
     <div className="login-page">
     <div className="logimage"> 
@@ -20,7 +57,16 @@ function SignUp() {
 
             </div>
             <div className="inps">
-              <p>Email or Username</p>
+              <p>Username</p>
+              <TextField
+              type="text"
+              name="username"
+              control={control}
+              placeholder="Enter Your Email"
+              width="400px"
+
+              />
+              <p>Enter Your Email</p>
               <TextField
               type="Email"
               name="email"
@@ -29,7 +75,7 @@ function SignUp() {
               width="400px"
 
               />
-              <p>Password</p>
+              <p onClick={wrongname}>Password</p>
               <TextField
               type="password"
               name="password"
@@ -48,7 +94,15 @@ function SignUp() {
               width="400px"
 
               />
-              <button  onClick={backtologin}>Create an Account</button>
+              {wrong?<p style={{
+        display:"none"
+      }}></p> :
+      <p style={{marginTop:"2px",
+        color:"red"}}>Password Mismatched</p>
+      }
+              <button onClick={handleSubmit(onSubmit)}>
+    Create an Account
+</button>
             </div>
 
 

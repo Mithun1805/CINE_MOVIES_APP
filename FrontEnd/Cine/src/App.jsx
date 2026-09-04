@@ -8,6 +8,8 @@ import Home from "./components/Home";
 import History from "./components/History";
 import MyList from "./components/Mylist";
 import SignUp from './components/SignUp'
+import Profile from "./components/Profile";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -20,13 +22,26 @@ function App() {
       {/* Navbar stays fixed */}
       <Route element={<Layout />}>
 
-        <Route path="/home" element={<Home />} />
+        <Route path="/home" element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        } />
 
-        <Route path="/history" element={<History />} />
+        <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
 
-        <Route path="/mylist" element={<MyList />} />
+        <Route path="/mylist" element={<ProtectedRoute><MyList /></ProtectedRoute>} />
 
-        <Route path="/search" element={<Search/>}/>
+        <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
+
+        <Route
+    path="/profile"
+    element={
+        <ProtectedRoute>
+            <Profile />
+        </ProtectedRoute>
+    }
+/>
 
         
 

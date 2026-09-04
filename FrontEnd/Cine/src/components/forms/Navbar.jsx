@@ -14,16 +14,44 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import SearchIcon from '@mui/icons-material/Search';
+import api from "./Axios";
+
 
 const pages = ["HOME", "MY LIST", "HISTORY"];
-const settings = ["Profile", "Logout"];
+
 
 function Navbar() {
+      const username = localStorage.getItem("username");
 
     const navigate = useNavigate()
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const settings = ["Profile", "Logout"];
+  const handleLogout = async () => {
+    try {
+        // Get CSRF token from Django
+        const csrfResponse = await api.get("/csrf/");
 
+        const csrfToken = csrfResponse.data.csrfToken;
+
+        // Logout with CSRF token
+        await api.post(
+            "/logout/",
+            {},
+            {
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                },
+            }
+        );
+
+        console.log("Logout successful");
+
+        navigate("/");
+    } catch (error) {
+        console.error("Logout error:", error);
+    }
+};
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -237,11 +265,15 @@ function Navbar() {
                 <MenuItem
                   key={setting}
                   onClick={()=>{handleCloseUserMenu();
-                    if (setting == "Logout"){
-                        navigate("/")
+                    if (setting === "Logout") {
+                    handleLogout();
+}
+                    if(setting == "Profile"){
+                      navigate("/profile")
                     }
                   }}
                 >
+                  
                   <Typography sx={{ textAlign: "center" }}>
 
                     {setting}

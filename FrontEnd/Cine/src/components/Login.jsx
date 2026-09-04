@@ -4,10 +4,16 @@ import TextField from './forms/MytextField'
 import { useForm } from "react-hook-form";
 import {useNavigate} from "react-router-dom"
 import { Margin } from '@mui/icons-material';
+import api from "./forms/Axios";
 
 function Login() {
     const navigate = useNavigate()
-    const { control } = useForm();
+    const { control, handleSubmit } = useForm({
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    });
     const homepage = () => {
         navigate("/home")
     }
@@ -15,13 +21,30 @@ function Login() {
         navigate("/signup")
     }
     const [wrong,setWrong] = useState(true)
+    const [success,setSuccess] = useState(false)
+    const onSubmit = async (data) => {
+    console.log("LOGIN DATA:", data);
 
-    const wrongname = () => {
-      setWrong(false)
+    try {
+        const response = await api.post("/login/", {
+            email: data.email,
+            password: data.password,
+        });
+
+        console.log("Server:", response.data);
+
+        localStorage.setItem("username", response.data.username);
+
+        navigate("/home");
+
+    } catch (error) {
+        console.error("Login error:", error);
+        console.log("Status:", error.response?.status);
+        console.log("Response:", error.response?.data);
+        setWrong(false)
     }
-    const correctpass = () => {
-      setWrong(true)
-    }
+};
+
   return (
 
     <div className="login-page">
@@ -49,12 +72,12 @@ function Login() {
       />
       {wrong?<p style={{
         display:"none"
-      }}>Wrong Username or Email</p> :
+      }}>Wrong Email or Password</p> :
       <p style={{marginTop:"2px",
-        color:"red"}}>Wrong Username or Email</p>
+        color:"red"}}>Wrong Email or Password</p>
       }
 
-      <p onClick={correctpass}>Password</p>
+      <p>Password</p>
 
       <TextField
       
@@ -73,14 +96,14 @@ function Login() {
       }}>Wrong Password</p>
       }
 
-      <button onClick={homepage}>
+      <button onClick={handleSubmit(onSubmit)}>
         Sign In
       </button>
 
     </div>
 
     <div className="lastcol">
-      <p onClick={wrongname}>New to CineMatch?</p>
+      <p>New to CineMatch?</p>
       <p className="signup" onClick={signup}>
         Sign Up Now
       </p>
