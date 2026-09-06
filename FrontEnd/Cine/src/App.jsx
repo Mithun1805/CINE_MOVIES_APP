@@ -10,6 +10,7 @@ import MyList from "./components/Mylist";
 import SignUp from './components/SignUp'
 import Profile from "./components/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
+import MovieDetails from "./components/MovieDetails";
 
 function App() {
   return (
@@ -33,6 +34,15 @@ function App() {
         <Route path="/mylist" element={<ProtectedRoute><MyList /></ProtectedRoute>} />
 
         <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
+
+        <Route
+    path="/movie/:tmdb_id"
+    element={
+        <ProtectedRoute>
+            <MovieDetails />
+        </ProtectedRoute>
+    }
+/>
 
         <Route
     path="/profile"

@@ -22,30 +22,51 @@ const wrongname = () => {
         navigate("/");
     };
 
-    const onSubmit = async (data) => {
-        console.log(data);
-        console.log(data.password)
-        console.log(data.password2)
-        if (data.password == data.password2){
-          setWrong(true)
-              try {
-        const response = await api.post("/signup/", {
-            username:data.username,
-            email: data.email,
-            password: data.password,
-        });
+    
+const onSubmit = async (data) => {
+    console.log(data);
+    console.log(data.password);
+    console.log(data.password2);
 
-        console.log("Server:", response.data);
+    if (data.password === data.password2) {
+        setWrong(true);
 
-        navigate("/");
-    } catch (error) {
-        console.error("Signup error:", error);
+        try {
+            // Get CSRF token first
+            const csrfResponse = await api.get("/csrf/");
+
+            const csrfToken = csrfResponse.data.csrfToken;
+
+            // Send signup request
+            const response = await api.post(
+                "/signup/",
+                {
+                    username: data.username,
+                    email: data.email,
+                    password: data.password,
+                },
+                {
+                    headers: {
+                        "X-CSRFToken": csrfToken,
+                    },
+                }
+            );
+
+            console.log("Server:", response.data);
+            navigate("/");
+
+        } catch (error) {
+            console.error("Signup error:", error);
+            console.log("Status:", error.response?.status);
+            console.log("Response:", error.response?.data);
+        }
+
+    } else {
+        setWrong(false);
     }
-        }
-        else{
-          setWrong(false)
-        }
-    };
+};
+
+
   return (
     <div className="login-page">
     <div className="logimage"> 

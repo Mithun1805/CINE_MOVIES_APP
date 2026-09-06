@@ -22,14 +22,31 @@ function Login() {
     }
     const [wrong,setWrong] = useState(true)
     const [success,setSuccess] = useState(false)
-    const onSubmit = async (data) => {
+const onSubmit = async (data) => {
+
     console.log("LOGIN DATA:", data);
 
     try {
-        const response = await api.post("/login/", {
-            email: data.email,
-            password: data.password,
-        });
+        // Get CSRF token first
+        const csrfResponse = await api.get("/csrf/");
+
+        const csrfToken = csrfResponse.data.csrfToken;
+
+        console.log("CSRF TOKEN:", csrfToken);
+
+        // Now login
+        const response = await api.post(
+            "/login/",
+            {
+                email: data.email,
+                password: data.password,
+            },
+            {
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                },
+            }
+        );
 
         console.log("Server:", response.data);
 
@@ -38,12 +55,16 @@ function Login() {
         navigate("/home");
 
     } catch (error) {
+
         console.error("Login error:", error);
         console.log("Status:", error.response?.status);
         console.log("Response:", error.response?.data);
-        setWrong(false)
+
+        setWrong(false);
     }
 };
+
+
 
   return (
 

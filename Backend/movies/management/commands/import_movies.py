@@ -3,15 +3,16 @@ import json
 from datetime import datetime
 
 from django.core.management.base import BaseCommand
-from movies.models import Movie
+from movies.models import Movie, MovieCredits
 
 
 class Command(BaseCommand):
-    help = "Import TMDB movies dataset into PostgreSQL"
+    help = "Import TMDB movies and credits dataset into PostgreSQL"
 
     def handle(self, *args, **kwargs):
 
-        file_path = "Data/tmdb_5000_movies.csv"
+        movies_file_path = "Data/tmdb_5000_movies.csv"
+        credits_file_path = "Data/tmdb_5000_credits.csv"
 
         self.stdout.write("Starting movie import...")
 
@@ -19,47 +20,69 @@ class Command(BaseCommand):
         updated = 0
         skipped = 0
 
-        with open(file_path, "r", encoding="utf-8") as file:
+        # =========================================================
+        # 1. IMPORT MOVIES
+        # =========================================================
+
+        with open(
+            movies_file_path,
+            "r",
+            encoding="utf-8"
+        ) as file:
 
             reader = csv.DictReader(file)
 
             for row in reader:
 
                 try:
-                    # -------------------------
-                    # TMDB ID
-                    # -------------------------
+
                     tmdb_id = int(row["id"])
 
                     # -------------------------
                     # Release date
                     # -------------------------
+
                     release_date = None
 
                     if row["release_date"]:
+
                         try:
                             release_date = datetime.strptime(
                                 row["release_date"],
                                 "%Y-%m-%d"
                             ).date()
+
                         except ValueError:
                             release_date = None
 
                     # -------------------------
                     # JSON fields
                     # -------------------------
-                    genres = json.loads(row["genres"]) if row["genres"] else []
-                    keywords = json.loads(row["keywords"]) if row["keywords"] else []
+
+                    genres = (
+                        json.loads(row["genres"])
+                        if row["genres"]
+                        else []
+                    )
+
+                    keywords = (
+                        json.loads(row["keywords"])
+                        if row["keywords"]
+                        else []
+                    )
+
                     production_companies = (
                         json.loads(row["production_companies"])
                         if row["production_companies"]
                         else []
                     )
+
                     production_countries = (
                         json.loads(row["production_countries"])
                         if row["production_countries"]
                         else []
                     )
+
                     spoken_languages = (
                         json.loads(row["spoken_languages"])
                         if row["spoken_languages"]
@@ -67,8 +90,9 @@ class Command(BaseCommand):
                     )
 
                     # -------------------------
-                    # Create or update movie
+                    # Create / update Movie
                     # -------------------------
+
                     movie, was_created = Movie.objects.update_or_create(
                         tmdb_id=tmdb_id,
 
@@ -79,11 +103,15 @@ class Command(BaseCommand):
                             "overview": row["overview"] or "",
                             "tagline": row["tagline"] or "",
                             "homepage": row["homepage"] or "",
-
                             "release_date": release_date,
 
-                            "budget": int(row["budget"] or 0),
-                            "revenue": int(row["revenue"] or 0),
+                            "budget": int(
+                                row["budget"] or 0
+                            ),
+
+                            "revenue": int(
+                                row["revenue"] or 0
+                            ),
 
                             "runtime": (
                                 int(float(row["runtime"]))
@@ -91,9 +119,17 @@ class Command(BaseCommand):
                                 else None
                             ),
 
-                            "popularity": float(row["popularity"] or 0),
-                            "vote_average": float(row["vote_average"] or 0),
-                            "vote_count": int(row["vote_count"] or 0),
+                            "popularity": float(
+                                row["popularity"] or 0
+                            ),
+
+                            "vote_average": float(
+                                row["vote_average"] or 0
+                            ),
+
+                            "vote_count": int(
+                                row["vote_count"] or 0
+                            ),
 
                             "status": row["status"] or "",
 
@@ -111,21 +147,120 @@ class Command(BaseCommand):
                         updated += 1
 
                 except Exception as e:
+
                     skipped += 1
 
                     self.stdout.write(
                         self.style.WARNING(
-                            f"Skipped movie: {row.get('title', 'Unknown')} - {e}"
+                            f"Skipped movie: "
+                            f"{row.get('title', 'Unknown')} - {e}"
                         )
                     )
 
-        self.stdout.write("")
         self.stdout.write(
             self.style.SUCCESS(
-                f"Import complete!"
+                "Movie import completed!"
             )
         )
 
         self.stdout.write(f"Created: {created}")
         self.stdout.write(f"Updated: {updated}")
         self.stdout.write(f"Skipped: {skipped}")
+
+        # =========================================================
+        # 2. IMPORT CREDITS
+        # =========================================================
+
+        self.stdout.write("")
+        self.stdout.write("Starting credits import...")
+
+        credits_created = 0
+        credits_updated = 0
+        credits_skipped = 0
+
+        with open(
+            credits_file_path,
+            "r",
+            encoding="utf-8"
+        ) as file:
+
+            reader = csv.DictReader(file)
+
+            for row in reader:
+
+                try:
+
+                    movie_id = int(row["movie_id"])
+
+                    movie = Movie.objects.filter(
+                        tmdb_id=movie_id
+                    ).first()
+
+                    if not movie:
+                        credits_skipped += 1
+                        continue
+
+                    cast = (
+                        json.loads(row["cast"])
+                        if row["cast"]
+                        else []
+                    )
+
+                    crew = (
+                        json.loads(row["crew"])
+                        if row["crew"]
+                        else []
+                    )
+
+                    credits, was_created = (
+                        MovieCredits.objects.update_or_create(
+                            movie=movie,
+
+                            defaults={
+                                "cast": cast,
+                                "crew": crew,
+                            }
+                        )
+                    )
+
+                    if was_created:
+                        credits_created += 1
+                    else:
+                        credits_updated += 1
+
+                except Exception as e:
+
+                    credits_skipped += 1
+
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"Skipped credits: "
+                            f"{row.get('title', 'Unknown')} - {e}"
+                        )
+                    )
+
+        self.stdout.write("")
+        self.stdout.write(
+            self.style.SUCCESS(
+                "Credits import completed!"
+            )
+        )
+
+        self.stdout.write(
+            f"Credits created: {credits_created}"
+        )
+
+        self.stdout.write(
+            f"Credits updated: {credits_updated}"
+        )
+
+        self.stdout.write(
+            f"Credits skipped: {credits_skipped}"
+        )
+
+        self.stdout.write("")
+        self.stdout.write(
+            self.style.SUCCESS(
+                "All imports completed successfully!"
+            )
+        )

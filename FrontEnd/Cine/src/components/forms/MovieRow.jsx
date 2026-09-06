@@ -1,26 +1,54 @@
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+
 import Box from "@mui/material/Box";
-import api from "./Axios";
 
-function MovieRow() {
-    const [movies, setMovies] = useState([]);
+import { useNavigate } from "react-router-dom";
 
-    useEffect(() => {
-        const fetchMovies = async () => {
-            try {
-                const response = await api.get("/");
+import api, { getCsrfToken } from "./Axios";
 
-                console.log("API response:", response.data);
+function MovieRow({ movies }) {
+    const navigate = useNavigate();
 
-                setMovies(response.data);
-            } catch (error) {
-                console.error("Error fetching movies:", error);
+    const handleMovieClick = async (movie) => {
+        console.log("Clicked movie:", movie);
+        console.log("TMDB ID:", movie.tmdb_id);
+
+        try {
+            // Make sure CSRF cookie exists
+            await api.get("/csrf/");
+
+            const csrfToken = getCsrfToken();
+
+            console.log("CSRF token:", csrfToken);
+
+            // Add movie to history
+            await api.post(
+                `/add-history/${movie.tmdb_id}/`,
+                {},
+                {
+                    headers: {
+                        "X-CSRFToken": csrfToken,
+                    },
+                }
+            );
+
+            console.log("Movie added to history");
+        } catch (error) {
+            console.error("History error:", error);
+
+            if (error.response?.status === 401) {
+                console.log("User is not logged in");
             }
-        };
 
-        fetchMovies();
-    }, []);
+            if (error.response?.status === 403) {
+                console.log("CSRF error:", error.response.data);
+            }
+        }
+
+        // Go to movie detail
+        navigate(`/movie/${movie.tmdb_id}`);
+    };
 
     return (
         <Box
@@ -30,9 +58,11 @@ function MovieRow() {
                 overflowX: "auto",
                 width: "100%",
                 padding: 2,
+
                 "&::-webkit-scrollbar": {
                     display: "none",
                 },
+
                 scrollbarWidth: "none",
             }}
         >
@@ -40,8 +70,13 @@ function MovieRow() {
                 <Box
                     key={movie.tmdb_id}
                     component="img"
-                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                    src={
+                        movie.poster_path
+                            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                            : ""
+                    }
                     alt={movie.title}
+                    onClick={() => handleMovieClick(movie)}
                     sx={{
                         minWidth: 180,
                         width: 180,
@@ -49,6 +84,7 @@ function MovieRow() {
                         objectFit: "cover",
                         borderRadius: 2,
                         flexShrink: 0,
+                        cursor: "pointer",
                     }}
                 />
             ))}

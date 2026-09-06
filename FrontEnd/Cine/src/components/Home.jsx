@@ -8,6 +8,39 @@ import StarRateIcon from '@mui/icons-material/StarRate';
 
 function Home() {
     const [movie, setMovie] = useState(null);
+        const [movies, setMovies] = useState([]);
+        const [movies2, setMovies2] = useState([]);
+
+    useEffect(() => {
+        const fetchMovies = async () => {
+            try {
+                const response = await api.get("/top-rated/");
+
+                console.log("API response:", response.data);
+
+                setMovies(response.data);
+            } catch (error) {
+                console.error("Error fetching movies:", error);
+            }
+        };
+
+        fetchMovies();
+    }, []);
+    useEffect(() => {
+        const fetchMovies = async () => {
+            try {
+                const response = await api.get("/movielist2/");
+
+                console.log("API response:", response.data);
+
+                setMovies2(response.data);
+            } catch (error) {
+                console.error("Error fetching movies:", error);
+            }
+        };
+
+        fetchMovies();
+    }, []);
 
 
     useEffect(() => {
@@ -96,11 +129,11 @@ function Home() {
             </div>
 
             <div className="row">
-                <MovieRow />
+                <MovieRow movies={movies} />
             </div>
 
             <div className="row">
-                <MovieRow />
+                <MovieRow movies={movies2} />
             </div>
         </div>
     );
