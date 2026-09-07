@@ -1,5 +1,8 @@
+
 import React, { useEffect, useState } from "react";
+
 import { useParams } from "react-router-dom";
+
 import api from "./forms/Axios";
 
 function MovieDetails() {
@@ -7,6 +10,8 @@ function MovieDetails() {
 
     const [movie, setMovie] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [addingToList, setAddingToList] = useState(false);
+    const [listMessage, setListMessage] = useState("");
 
     useEffect(() => {
         const fetchMovie = async () => {
@@ -18,7 +23,6 @@ function MovieDetails() {
                 console.log("Movie:", response.data);
 
                 setMovie(response.data);
-
             } catch (error) {
                 console.error("Movie details error:", error);
             } finally {
@@ -31,6 +35,29 @@ function MovieDetails() {
         }
     }, [tmdb_id]);
 
+    const handleAddToMyList = async () => {
+        try {
+            setAddingToList(true);
+            setListMessage("");
+
+            await api.post(`/add-to-mylist/${tmdb_id}/`);
+
+            setListMessage("Added to My List ✓");
+
+            console.log("Movie added to My List");
+        } catch (error) {
+            console.error("My List error:", error);
+
+            if (error.response?.status === 401) {
+                setListMessage("Please login first.");
+            } else {
+                setListMessage("Could not add movie to My List.");
+            }
+        } finally {
+            setAddingToList(false);
+        }
+    };
+
     if (loading) {
         return <div className="movie-loading">Loading...</div>;
     }
@@ -41,7 +68,6 @@ function MovieDetails() {
 
     return (
         <div className="movie-details">
-
             <div className="movie-details-content-wrapper">
 
                 <img
@@ -84,12 +110,46 @@ function MovieDetails() {
                         {movie.overview}
                     </p>
 
+                    {/* Add to My List button */}
+                    <button
+                        onClick={handleAddToMyList}
+                        disabled={addingToList}
+                        style={{
+                            marginTop: "20px",
+                            padding: "12px 24px",
+                            border: "none",
+                            borderRadius: "8px",
+                            backgroundColor: "#ffffff",
+                            color: "#000000",
+                            fontSize: "16px",
+                            fontWeight: "bold",
+                            cursor: addingToList
+                                ? "not-allowed"
+                                : "pointer",
+                            opacity: addingToList ? 0.6 : 1,
+                        }}
+                    >
+                        {addingToList
+                            ? "Adding..."
+                            : "＋ Add to My List"}
+                    </button>
+
+                    {listMessage && (
+                        <p
+                            style={{
+                                marginTop: "10px",
+                                color: "white",
+                            }}
+                        >
+                            {listMessage}
+                        </p>
+                    )}
+
                 </div>
-
             </div>
-
         </div>
     );
 }
 
 export default MovieDetails;
+

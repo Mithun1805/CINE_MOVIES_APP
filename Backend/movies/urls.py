@@ -16,6 +16,10 @@ from .views import (
     movie_detail,
     add_history,
     history,
+    add_to_mylist,
+    mylist,
+    add_search_history,
+    latest_search,
 )
 
 urlpatterns = [
@@ -36,5 +40,10 @@ urlpatterns = [
     # Watch history
     path("add-history/<int:tmdb_id>/", add_history, name="add-history"),
     path("history/", history, name="history"),
+
+    path("add-to-mylist/<int:tmdb_id>/", add_to_mylist, name="add-to-mylist"),
+    path("mylist/", mylist, name="mylist"),
+    path("add-search-history/<int:tmdb_id>/", add_search_history),
+    path("latest-search/", latest_search),
 ]
 

@@ -1,100 +1,87 @@
+
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+
+import { useNavigate } from "react-router-dom";
+
 import api from "./forms/Axios";
 
-function MovieDetails() {
+export default function MyList() {
+    const [myList, setMyList] = useState([]);
 
-    const { tmdb_id } = useParams();
-
-    const [movie, setMovie] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
-
-        const fetchMovie = async () => {
-
+        const fetchMyList = async () => {
             try {
+                const response = await api.get("/mylist/");
 
-                const response = await api.get(
-                    `/movie/${tmdb_id}/`
-                );
+                console.log("My List:", response.data);
 
-                console.log("MOVIE DETAILS:", response.data);
-
-                setMovie(response.data);
-
+                setMyList(response.data);
             } catch (error) {
-
-                console.error(
-                    "Movie details error:",
-                    error
-                );
-
-            } finally {
-
-                setLoading(false);
-
+                console.error("MyList error:", error);
             }
         };
 
-        fetchMovie();
-
-    }, [tmdb_id]);
-
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (!movie) {
-        return <div>Movie not found</div>;
-    }
-
+        fetchMyList();
+    }, []);
 
     return (
-        <div className="movie-details">
+        <div
+            style={{
+                padding: "30px",
+                color: "white",
+            }}
+        >
+            <h1>My List</h1>
 
-            <img
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                alt={movie.title}
-            />
+            {myList.length === 0 ? (
+                <p>No items in your list yet.</p>
+            ) : (
+                <div
+                    style={{
+                        display: "grid",
+                        gridTemplateColumns:
+                            "repeat(auto-fill, minmax(180px, 1fr))",
+                        gap: "25px",
+                    }}
+                >
+                    {myList.map((item) => (
+                        <div
+                            key={item.id}
+                            onClick={() => {
+                                navigate(`/movie/${item.tmdb_id}`);
+                            }}
+                            style={{
+                                cursor: "pointer",
+                            }}
+                        >
+                            <img
+                                src={
+                                    item.poster_path
+                                        ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+                                        : ""
+                                }
+                                alt={item.title}
+                                style={{
+                                    width: "100%",
+                                    borderRadius: "10px",
+                                }}
+                            />
 
-            <div>
+                            <h3>{item.title}</h3>
 
-                <h1>{movie.title}</h1>
-
-                <p>
-                    ⭐ Rating: {movie.imdb_rating}
-                </p>
-
-                <p>
-                    📅 Release Date: {movie.release_date}
-                </p>
-
-                <p>
-                    🎬 Director: {movie.director}
-                </p>
-
-                <h3>Cast</h3>
-
-                <div>
-                    {movie.cast.map((person, index) => (
-                        <span key={index}>
-                            {person.name || person}
-                        </span>
+                            <p>
+                                Added:{" "}
+                                {new Date(
+                                    item.added_at
+                                ).toLocaleString()}
+                            </p>
+                        </div>
                     ))}
                 </div>
-
-                <h3>Overview</h3>
-
-                <p>
-                    {movie.overview}
-                </p>
-
-            </div>
-
+            )}
         </div>
     );
 }
 
-export default MovieDetails;

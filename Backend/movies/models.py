@@ -85,3 +85,36 @@ class WatchHistory(models.Model):
         return f"{self.user.username} watched {self.movie.title}"
 
 # Create your models here.
+
+
+
+
+class MyList(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "movie"],
+                name="unique_user_movie_mylist"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.movie.title}"
+
+
+
+
+class SearchHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    searched_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-searched_at"]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.movie.title}"

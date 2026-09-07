@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import Movie,MovieCredits,WatchHistory
+from .models import Movie, MovieCredits, WatchHistory, MyList, SearchHistory
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MovieSerializer,SignupSerializer
@@ -153,16 +153,28 @@ def delete_account(request):
 
 
 
+
 @api_view(["GET"])
 def recommendations(request):
-
-    movie_title = request.GET.get("movie")
-
-    if not movie_title:
+    if not request.user.is_authenticated:
         return Response(
-            {"message": "Movie title is required"},
-            status=400
+            {"message": "Not authenticated"},
+            status=401
         )
+
+    # Get the latest search made by this logged-in user
+    latest = SearchHistory.objects.filter(
+        user=request.user
+    ).select_related("movie").first()
+
+    if not latest:
+        return Response([])
+
+    # Use this user's latest searched movie as the recommender input
+    movie_title = latest.movie.title
+
+    print("USER:", request.user.username)
+    print("LATEST SEARCH:", movie_title)
 
     results = recommend_movies(movie_title, top_n=10)
 
@@ -170,11 +182,15 @@ def recommendations(request):
     movie_ids = [movie["movie_id"] for movie in results]
 
     # Get movies from Django database
-    movies = Movie.objects.filter(tmdb_id__in=movie_ids)
+    movies = Movie.objects.filter(
+        tmdb_id__in=movie_ids
+    )
 
     serializer = MovieSerializer(movies, many=True)
 
     return Response(serializer.data)
+
+
 
 
 
@@ -302,3 +318,115 @@ def history(request):
         }
         for item in history_items
     ])
+
+
+@api_view(["POST"])
+def add_to_mylist(request, tmdb_id):
+    if not request.user.is_authenticated:
+        return Response(
+            {"message": "Not authenticated"},
+            status=401
+        )
+
+    try:
+        movie = Movie.objects.get(tmdb_id=tmdb_id)
+    except Movie.DoesNotExist:
+        return Response(
+            {"message": "Movie not found"},
+            status=404
+        )
+
+    my_list_item, created = MyList.objects.get_or_create(
+        user=request.user,
+        movie=movie
+    )
+
+    if created:
+        return Response(
+            {"message": "Movie added to My List"},
+            status=201
+        )
+
+    return Response(
+        {"message": "Movie already in My List"},
+        status=200
+    )
+
+
+@api_view(["GET"])
+def mylist(request):
+    if not request.user.is_authenticated:
+        return Response(
+            {"message": "Not authenticated"},
+            status=401
+        )
+
+    my_list_items = MyList.objects.filter(
+        user=request.user
+    ).select_related("movie").order_by("-added_at")
+
+    return Response([
+        {
+            "id": item.id,
+            "tmdb_id": item.movie.tmdb_id,
+            "title": item.movie.title,
+            "poster_path": item.movie.poster_path,
+            "added_at": item.added_at,
+        }
+        for item in my_list_items
+    ])
+
+
+@api_view(["POST"])
+def add_search_history(request, tmdb_id):
+    if not request.user.is_authenticated:
+        return Response(
+            {"message": "Not authenticated"},
+            status=401
+        )
+
+    try:
+        movie = Movie.objects.get(tmdb_id=tmdb_id)
+    except Movie.DoesNotExist:
+        return Response(
+            {"message": "Movie not found"},
+            status=404
+        )
+
+    SearchHistory.objects.create(
+        user=request.user,
+        movie=movie
+    )
+
+    return Response(
+        {
+            "message": "Search saved",
+            "movie": movie.title
+        },
+        status=201
+    )
+
+
+@api_view(["GET"])
+def latest_search(request):
+    if not request.user.is_authenticated:
+        return Response(
+            {"message": "Not authenticated"},
+            status=401
+        )
+
+    search = SearchHistory.objects.filter(
+        user=request.user
+    ).select_related("movie").first()
+
+    if not search:
+        return Response(
+            {"message": "No search history"},
+            status=404
+        )
+
+    return Response({
+        "tmdb_id": search.movie.tmdb_id,
+        "title": search.movie.title,
+        "searched_at": search.searched_at,
+    })

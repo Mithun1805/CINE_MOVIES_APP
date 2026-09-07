@@ -43,8 +43,8 @@ export default function History() {
 
                         <div
                             key={item.id}
-                            onClick={() =>
-                                navigate(`/movie/${item.tmdb_id}`)
+                            onClick={() =>{
+                                navigate(`/movie/${item.tmdb_id}`)}
                             }
                             style={{
                                 cursor: "pointer",
